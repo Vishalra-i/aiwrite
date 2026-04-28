@@ -3,7 +3,7 @@ const getPrompt = (templateName, inputs, language, tone) => {
   const baseTone = tone ? `Tone of voice: ${tone}.` : '';
 
   switch (templateName) {
-    case 'Blog post intro':
+    case 'Blog post intro ':
       return `Write a captivating blog post intro about ${inputs.topic}. Target audience: ${inputs.audience}. ${baseLanguage}. ${baseTone}`;
     case 'Facebook / Instagram ad copy':
       return `Write a high-converting Facebook/Instagram ad copy for a product named ${inputs.productName}. Product description: ${inputs.description}. ${baseLanguage}. ${baseTone}`;
