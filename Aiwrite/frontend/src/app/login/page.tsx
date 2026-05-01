@@ -24,8 +24,9 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       toast.success("Login successful");
       router.push("/dashboard");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Invalid credentials");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export default function Login() {
         </form>
 
         <p className="text-center text-slate-600 mt-6 text-sm">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{' '}
           <Link href="/register" className="text-primary font-semibold hover:underline">
             Sign up
           </Link>

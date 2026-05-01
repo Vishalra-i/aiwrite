@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { ArrowLeft, Loader2, Copy, Sparkles, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Loader2, Copy, Sparkles } from "lucide-react";
 
 const getTemplateFields = (templateName: string) => {
   switch (templateName) {
@@ -50,12 +50,13 @@ export default function Generator({ params }: { params: { id: string } }) {
       });
       setOutput(data.generatedText);
       toast.success("Content generated successfully");
-    } catch (error: any) {
-      if (error.response?.status === 403) {
+    } catch (error: unknown) {
+      const err = error as { response?: { status?: number; data?: { message?: string } } };
+      if (err.response?.status === 403) {
         toast.error("Credits exhausted. Please upgrade your plan.");
         router.push("/dashboard/account");
       } else {
-        toast.error(error.response?.data?.message || "Failed to generate");
+        toast.error(err.response?.data?.message || "Failed to generate");
       }
     } finally {
       setLoading(false);

@@ -5,10 +5,18 @@ import Link from "next/link";
 import axios from "axios";
 import { Sparkles, LayoutDashboard, FileText, History, User, LogOut, Loader2, Menu, X } from "lucide-react";
 
+interface UserData {
+  name?: string;
+  email?: string;
+  wordsUsed?: number;
+  wordsLimit?: number;
+  plan?: string;
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -25,7 +33,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           headers: { Authorization: `Bearer ${token}` }
         });
         setUser(data);
-      } catch (error) {
+      } catch {
         localStorage.removeItem("token");
         router.push("/login");
       } finally {
@@ -57,7 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/");
   };
 
-  const percentageUsed = Math.min((user.wordsUsed / user.wordsLimit) * 100, 100);
+  const percentageUsed = Math.min(((user.wordsUsed || 0) / (user.wordsLimit || 1)) * 100, 100);
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -104,7 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="bg-slate-800 rounded-xl p-4 mb-4">
             <div className="flex justify-between text-xs mb-2">
               <span className="font-medium text-slate-300">Credits Used</span>
-              <span className="text-white">{user.wordsUsed} / {user.plan === 'pro' ? '∞' : user.wordsLimit}</span>
+              <span className="text-white">{user.wordsUsed || 0} / {user.plan === 'pro' ? '∞' : user.wordsLimit || 0}</span>
             </div>
             <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
               <div 
@@ -139,7 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span className="uppercase text-primary bg-primary/10 px-2 py-1 rounded text-xs font-bold">{user.plan}</span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white font-bold text-sm">
-              {user.name.charAt(0)}
+              {user.name?.charAt(0) || 'U'}
             </div>
           </div>
         </header>

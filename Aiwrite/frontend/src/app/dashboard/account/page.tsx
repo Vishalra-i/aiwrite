@@ -5,8 +5,23 @@ import toast from "react-hot-toast";
 import { Loader2, CheckCircle2, Zap, AlertTriangle } from "lucide-react";
 import Script from "next/script";
 
+interface UserData {
+  name?: string;
+  email?: string;
+  plan?: string;
+  credits?: number;
+  wordsUsed?: number;
+  wordsLimit?: number;
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id?: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+}
+
 export default function Account() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
 
@@ -18,7 +33,7 @@ export default function Account() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to load user data");
     } finally {
       setLoading(false);
@@ -45,7 +60,7 @@ export default function Account() {
         name: "WriteFlow AI",
         description: `Upgrade to ${plan} plan`,
         order_id: order.id,
-        handler: async function (response: any) {
+        handler: async function (response: RazorpayResponse) {
           try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
             await axios.post(`${API_URL}/api/payment/verify`, {
@@ -56,7 +71,7 @@ export default function Account() {
             });
             toast.success("Payment successful! Plan upgraded.");
             fetchUser();
-          } catch (error) {
+          } catch {
             toast.error("Payment verification failed");
           }
         },
@@ -69,9 +84,10 @@ export default function Account() {
         },
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-    } catch (error) {
+    } catch {
       toast.error("Failed to initiate payment");
     } finally {
       setProcessing(false);
@@ -86,7 +102,7 @@ export default function Account() {
     );
   }
 
-  const percentageUsed = Math.min((user.wordsUsed / user.wordsLimit) * 100, 100);
+  const percentageUsed = Math.min(((user.wordsUsed || 0) / (user.wordsLimit || 1)) * 100, 100);
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -127,8 +143,8 @@ export default function Account() {
           
           <div className="relative z-10">
             <div className="flex justify-between items-end mb-2">
-              <span className="text-4xl font-extrabold">{user.wordsUsed.toLocaleString()}</span>
-              <span className="text-slate-400 font-medium">/ {user.plan === 'pro' ? 'Unlimited' : user.wordsLimit.toLocaleString()} words</span>
+              <span className="text-4xl font-extrabold">{(user.wordsUsed || 0).toLocaleString()}</span>
+              <span className="text-slate-400 font-medium">/ {user.plan === 'pro' ? 'Unlimited' : (user.wordsLimit || 0).toLocaleString()} words</span>
             </div>
             
             <div className="h-4 w-full bg-slate-800 rounded-full overflow-hidden mt-4">

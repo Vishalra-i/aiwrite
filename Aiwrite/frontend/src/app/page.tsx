@@ -43,7 +43,7 @@ export default function Home() {
         </h1>
         
         <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create high-converting blogs, ad copies, emails, and more in seconds. Overcome writer's block and scale your content creation effortlessly.
+          Create high-converting blogs, ad copies, emails, and more in seconds. Overcome writer&apos;s block and scale your content creation effortlessly.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

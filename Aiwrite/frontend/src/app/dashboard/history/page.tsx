@@ -4,8 +4,17 @@ import axios from "axios";
 import { Loader2, Copy, Calendar, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 
+interface HistoryItem {
+  _id: string;
+  templateName: string;
+  wordCount: number;
+  createdAt: string;
+  inputs: Record<string, string>;
+  generatedText: string;
+}
+
 export default function History() {
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +26,7 @@ export default function History() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setHistory(data);
-      } catch (error) {
+      } catch {
         toast.error("Failed to fetch history");
       } finally {
         setLoading(false);
@@ -52,7 +61,7 @@ export default function History() {
             <FileText size={40} />
           </div>
           <h3 className="text-xl font-semibold text-slate-900 mb-2">No history yet</h3>
-          <p className="text-slate-500 max-w-sm">You haven't generated any content yet. Head over to templates to get started.</p>
+          <p className="text-slate-500 max-w-sm">You haven&apos;t generated any content yet. Head over to templates to get started.</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -69,7 +78,7 @@ export default function History() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inputs</p>
-                  {Object.entries(item.inputs).map(([key, val]: any) => (
+                  {Object.entries(item.inputs).map(([key, val]) => (
                     <div key={key} className="text-sm">
                       <span className="font-medium text-slate-700 capitalize">{key}: </span>
                       <span className="text-slate-500">{val}</span>

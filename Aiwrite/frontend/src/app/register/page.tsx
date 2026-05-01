@@ -26,8 +26,9 @@ export default function Register() {
       localStorage.setItem("token", data.token);
       toast.success("Account created successfully");
       router.push("/dashboard");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Registration failed");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
